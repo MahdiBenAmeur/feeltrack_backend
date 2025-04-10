@@ -7,7 +7,6 @@ This is the backend for a mental health and emotional wellbeing support applicat
 - 🤖 **AI Chatbot**: An empathetic AI chatbot that listens to users' concerns and provides supportive responses
 - ✨ **Positive Reframing**: Automatically reframes users' messages from a positive perspective
 - 🔔 **Supportive Notifications**: Sends periodic supportive messages based on recent conversation history
-- 🔐 **User Authentication**: Secure JWT-based authentication system
 - ⚙️ **User Preferences**: Customizable notification frequency and active hours
 
 ## Tech Stack
@@ -15,7 +14,6 @@ This is the backend for a mental health and emotional wellbeing support applicat
 - **FastAPI**: Modern, high-performance web framework for building APIs
 - **MySQL**: Database for storing user data, conversations, and messages
 - **Google Gemini API**: Generative AI model for chatbot responses and supportive messages
-- **JWT**: Secure authentication mechanism
 
 ## Project Structure
 
@@ -28,15 +26,6 @@ mental-health-app/
 └── requirements.txt        # Python dependencies
 ```
 
-## Database Schema
-
-The application uses the following database tables:
-
-- **Users**: Stores user account information
-- **Conversations**: Tracks conversation sessions for each user
-- **Messages**: Stores individual messages in conversations, including AI responses and positive reframings
-- **SupportiveMessages**: Stores generated supportive messages for notifications
-- **UserPreferences**: Stores user preferences for notifications and app settings
 
 ## Getting Started
 
@@ -78,7 +67,6 @@ The application uses the following database tables:
    uvicorn main:app --reload
    ```
 
-The API will be available at `http://localhost:8000`. You can explore the API documentation at `http://localhost:8000/docs`.
 
 ## API Endpoints
 
@@ -112,21 +100,6 @@ The application uses carefully crafted prompts to guide the AI's responses:
 2. **Positive Reframing Prompt**: Guides the AI to reframe user messages in a positive light
 3. **Supportive Message Prompt**: Directs the AI to generate short, personalized supportive messages
 
-## Requirements File
-
-Create a `requirements.txt` file with the following dependencies:
-
-```
-fastapi
-uvicorn
-python-multipart
-python-jose[cryptography]
-passlib[bcrypt]
-mysql-connector-python
-python-dotenv
-google-generativeai
-```
-
 ## Extending the Application
 
 Here are some ideas for future enhancements:
@@ -137,14 +110,4 @@ Here are some ideas for future enhancements:
 4. **Multiple Personalities**: Allow users to choose different AI personalities
 5. **Journaling Features**: Add structured journaling prompts and templates
 
-## Mobile App Integration
 
-This backend is designed to be integrated with a mobile app frontend. To connect the mobile app:
-
-1. Configure your mobile app to make API requests to the endpoints described above
-2. Implement JWT authentication in your mobile app
-3. Create UI components for chat interface, notification display, and settings
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
