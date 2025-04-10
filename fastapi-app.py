@@ -11,7 +11,7 @@ import hashlib
 import uuid
 import google.generativeai as genai
 from dotenv import load_dotenv
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load environment variables
 load_dotenv()
 
@@ -35,7 +35,14 @@ pool = mysql.connector.pooling.MySQLConnectionPool(
 
 # FastAPI app
 app = FastAPI(title="Mental Health Support App API")
-
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Pydantic models
 class UserCreate(BaseModel):
@@ -236,18 +243,19 @@ def create_message(conversation_id: int, content: str, is_user: bool, positive_r
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute(
-            "INSERT INTO Messages (conversation_id, content, is_user, positive_reframe) VALUES (%s, %s, %s, %s)",
-            (conversation_id, content, is_user, positive_reframe)
-        )
-        conn.commit()
-
         # Update the conversation's updated_at timestamp
         cursor.execute(
             "UPDATE Conversations SET updated_at = CURRENT_TIMESTAMP WHERE conversation_id = %s",
             (conversation_id,)
         )
         conn.commit()
+        cursor.execute(
+            "INSERT INTO Messages (conversation_id, content, is_user, positive_reframe) VALUES (%s, %s, %s, %s)",
+            (conversation_id, content, is_user, positive_reframe)
+        )
+        conn.commit()
+
+
 
         return cursor.lastrowid
     finally:
@@ -678,7 +686,6 @@ async def send_message(
     # Generate and save AI response
     ai_response = await generate_ai_response(conversation_history, message.content)
     ai_message_id = create_message(conversation_id, ai_response, False)
-
     # Schedule background task to generate supportive messages
     background_tasks.add_task(schedule_supportive_messages)
 
@@ -686,9 +693,10 @@ async def send_message(
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
+
         cursor.execute(
-            "SELECT message_id, content, is_user, positive_reframe, timestamp FROM Messages WHERE message_id IN (%s, %s)",
-            (user_message_id, ai_message_id)
+            "SELECT message_id, content, is_user, positive_reframe, timestamp FROM Messages WHERE message_id =  %s",
+            (ai_message_id,)
         )
         new_messages = cursor.fetchall()
         return new_messages
